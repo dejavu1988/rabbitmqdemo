@@ -78,8 +78,12 @@ public class MessageConsumer extends IConnectToRabbitMQ{
            try {
                //mQueue = mModel.queueDeclare().getQueue();
         	   mModel.queueDeclare(mQueueRecv, false, false, false, null);
+        	   mModel.queueDeclare(mQueueSend, false, false, false, null);
+        	   mModel.queuePurge(mQueueRecv);
+        	   mModel.queuePurge(mQueueSend);
+        	   if(D) Log.e(TAG, "connection: queue declared and purged");
                MySubscription = new QueueingConsumer(mModel);
-               mModel.basicConsume(mQueueRecv, false, MySubscription);
+               mModel.basicConsume(mQueueRecv, true, MySubscription);
             } catch (IOException e) {
                 e.printStackTrace();
                 return false;
@@ -89,9 +93,8 @@ public class MessageConsumer extends IConnectToRabbitMQ{
             mConsumeHandler.post(mConsumeRunner);
  
            return true;
-       }else{
-           if(D) Log.e(TAG, "super connection failed");    	   
        }
+       if(D) Log.e(TAG, "super connection failed");  
        return false;
     }
  
@@ -109,7 +112,7 @@ public class MessageConsumer extends IConnectToRabbitMQ{
                     try {
                         delivery = MySubscription.nextDelivery();
                         mLastMessage = delivery.getBody();
-                        if(D) Log.e(TAG, "msg received: " + mLastMessage);
+                        if(D) Log.e(TAG, "msg received: " + new String(mLastMessage));
                         mMessageHandler.post(mReturnMessage);
                     } catch (InterruptedException ie) {
                         ie.printStackTrace();
@@ -125,8 +128,7 @@ public class MessageConsumer extends IConnectToRabbitMQ{
     	Thread thread = new Thread(){
     		@Override
             public void run(){
-    			try {
-    				mModel.queueDeclare(mQueueSend, false, false, false, null);
+    			try {    				
 					mModel.basicPublish("", mQueueSend, null, message.getBytes());
 					if(D) Log.e(TAG, "msg sent: " + message);
 				} catch (IOException e) {

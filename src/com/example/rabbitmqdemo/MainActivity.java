@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
  
             public void onReceiveMessage(byte[] message) {
                 String text = new String(message); 
-                mOutput.append("\n"+text);
+                mOutput.append(text+"\n");
                 mConsumer.Publish("ACK: hello world");
             }
         });
