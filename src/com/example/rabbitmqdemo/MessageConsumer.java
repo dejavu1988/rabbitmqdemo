@@ -18,12 +18,13 @@ public class MessageConsumer extends IConnectToRabbitMQ{
     private static final boolean D = true;
     
     //The Queue name for this consumer
-    private String mQueue;
+    private String mQueueRecv, mQueueSend;
     private QueueingConsumer MySubscription;
     
-    public MessageConsumer(String server, String queue) {
+    public MessageConsumer(String server, String queueRecv, String queueSend) {
         super(server);
-        mQueue = queue;
+        mQueueRecv = queueRecv;
+        mQueueSend = queueSend;
     }
  
     
@@ -63,6 +64,7 @@ public class MessageConsumer extends IConnectToRabbitMQ{
             Consume();
         }
     };
+    
  
     /**
      * Create Exchange and then start consuming. A binding needs to be added before any messages will be delivered
@@ -75,9 +77,9 @@ public class MessageConsumer extends IConnectToRabbitMQ{
     	   if(D) Log.e(TAG, "super connection successful");
            try {
                //mQueue = mModel.queueDeclare().getQueue();
-        	   mModel.queueDeclare(mQueue, false, false, false, null);
+        	   mModel.queueDeclare(mQueueRecv, false, false, false, null);
                MySubscription = new QueueingConsumer(mModel);
-               mModel.basicConsume(mQueue, false, MySubscription);
+               mModel.basicConsume(mQueueRecv, false, MySubscription);
             } catch (IOException e) {
                 e.printStackTrace();
                 return false;
@@ -100,7 +102,7 @@ public class MessageConsumer extends IConnectToRabbitMQ{
         {
  
              @Override
-                public void run() {
+             public void run() {
             	 if(D) Log.e(TAG, "consume");
                  while(Running){
                     QueueingConsumer.Delivery delivery;
@@ -117,6 +119,23 @@ public class MessageConsumer extends IConnectToRabbitMQ{
         };
         thread.start();
  
+    }
+    
+    public void Publish(final String message){
+    	Thread thread = new Thread(){
+    		@Override
+            public void run(){
+    			try {
+    				mModel.queueDeclare(mQueueSend, false, false, false, null);
+					mModel.basicPublish("", mQueueSend, null, message.getBytes());
+					if(D) Log.e(TAG, "msg sent: " + message);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    		}
+    	};
+    	thread.start();
     }
  
     public void dispose(){

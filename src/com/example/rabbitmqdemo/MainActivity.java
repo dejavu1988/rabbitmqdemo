@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
  
         //Create the consumer
         mConsumer = new MessageConsumer("54.229.32.28",
-        		"hello");
+        		"hello", "echohello");
  
         //Connect to broker
         //boolean t = mConsumer.connectToRabbitMQ();
@@ -37,9 +37,9 @@ public class MainActivity extends Activity {
         mConsumer.setOnReceiveMessageHandler(new OnReceiveMessageHandler(){
  
             public void onReceiveMessage(byte[] message) {
-                String text = new String(message);
- 
+                String text = new String(message); 
                 mOutput.append("\n"+text);
+                mConsumer.Publish("ACK: hello world");
             }
         });
         
