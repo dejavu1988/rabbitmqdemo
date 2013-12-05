@@ -4,5 +4,7 @@
     <string name="app_name">RabbitMQDemo</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world"></string>
+    <string name="foreground_service_started">Service is in the foreground</string>
+    <string name="foreground_service_label">McBP Daemon Service</string>
 
 </resources>

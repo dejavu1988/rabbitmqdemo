@@ -8,5 +8,6 @@
 	<classpathentry exported="true" kind="lib" path="libs/commons-cli-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/commons-io-1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/rabbitmq-client.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/gson-2.2.4.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

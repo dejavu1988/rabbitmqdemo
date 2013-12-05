@@ -1,9 +1,8 @@
 package com.example.rabbitmqdemo;
 
-import com.example.rabbitmqdemo.MessageConsumer.OnReceiveMessageHandler;
-
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
@@ -26,22 +25,25 @@ public class MainActivity extends Activity {
         mOutput =  (TextView) findViewById(R.id.output);
  
         //Create the consumer
-        mConsumer = new MessageConsumer("54.229.32.28",
-        		"hello", "echohello");
+        /*mConsumer = new MessageConsumer("54.229.32.28",
+        		"hello", "echohello");*/
  
         //Connect to broker
         //boolean t = mConsumer.connectToRabbitMQ();
         //if(D) Log.e(TAG, "connection "+t);
  
         //register for messages
-        mConsumer.setOnReceiveMessageHandler(new OnReceiveMessageHandler(){
+        /*mConsumer.setOnReceiveMessageHandler(new OnReceiveMessageHandler(){
  
             public void onReceiveMessage(byte[] message) {
                 String text = new String(message); 
                 mOutput.append(text+"\n");
                 mConsumer.Publish("ACK: hello world");
             }
-        });
+        });*/
+        
+        Intent intentToService = new Intent(this, DaemonService.class);
+        startService(intentToService);
         
 	}
 
@@ -57,14 +59,14 @@ public class MainActivity extends Activity {
         if(D) Log.e(TAG, "-- ON RESUME --");
         super.onResume();
         //Connect to broker
-        boolean t = mConsumer.connectToRabbitMQ();
-        if(D) Log.e(TAG, "connection "+t);
+        //boolean t = mConsumer.connectToRabbitMQ();
+        //if(D) Log.e(TAG, "connection "+t);
     }
  
     @Override
     protected void onPause() {
         if(D) Log.e(TAG, "-- ON PAUSE --");
         super.onPause();
-        mConsumer.dispose();
+        //mConsumer.dispose();
     }
 }
